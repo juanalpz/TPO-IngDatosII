@@ -43,6 +43,13 @@ Además, se implementaron distintos mecanismos de validación e integridad media
 ```text
 TPO-IngDatosII/
 │
+├── data/
+│   └── *.csv
+│
+├── docs/
+│   ├── DER.jpg
+│   └── TRABAJO_PRACTICO_OBLIGATORIO_2026.pdf
+│
 ├── sql/
 │   ├── schema.sql
 │   ├── load_data.sql
@@ -53,12 +60,9 @@ TPO-IngDatosII/
 │   ├── constraints.sql
 │   └── indexes.sql
 │
-├── data/
-│   └── *.csv
-│
-├── requirements.txt
 ├── .gitignore
-└── README.md
+├── README.md
+└── requirements.txt
 ```
 
 ---
