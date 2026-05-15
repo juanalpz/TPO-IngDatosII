@@ -51,7 +51,7 @@ DELIMITER ;
 -- -----------------------------------------------------
 DELIMITER //
 
-CREATE PROCEDURE sp_abm_productos (
+CREATE PROCEDURE sp_abm_producto (
 	IN sp_accion			VARCHAR(10),
 	IN sp_codigo_producto	INT,
     IN sp_marca				VARCHAR(45),
@@ -88,3 +88,4 @@ BEGIN
 END //
 
 DELIMITER ;
+
