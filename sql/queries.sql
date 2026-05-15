@@ -2,6 +2,8 @@
 -- QUERIES
 -- ================================================================================
 
+USE mydb;
+
 -- -----------------------------------------------------
 -- Requerimiento 1
 -- Obtener los datos de los clientes junto con sus teléfonos

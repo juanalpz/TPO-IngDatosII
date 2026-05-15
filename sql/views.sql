@@ -2,6 +2,9 @@
 -- Requerimiento 11
 -- Se necesita una vista que devuelva los datos de las facturas ordenadas por fecha
 -- -----------------------------------------------------
+
+USE mydb;
+
 CREATE VIEW vw_facturas_ordenadas AS
 SELECT * FROM E01_FACTURA F
 ORDER BY fecha;

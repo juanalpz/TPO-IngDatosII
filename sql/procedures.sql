@@ -2,6 +2,9 @@
 -- Requerimiento 13
 -- Implementar la funcionalidad que permita crear nuevos clientes, eliminar y modificar los ya existentes
 -- -----------------------------------------------------
+
+USE mydb;
+
 DELIMITER // 
 
 CREATE PROCEDURE sp_abm_cliente (

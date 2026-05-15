@@ -6,6 +6,8 @@
 -- IMPORTANTE:
 -- Los archivos CSV deben ubicarse en la carpeta permitida por secure_file_priv
 
+USE mydb;
+
 LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/e01_cliente.csv'
 INTO TABLE E01_CLIENTE
 CHARACTER SET latin1
