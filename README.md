@@ -40,7 +40,7 @@ Además, se implementaron distintos mecanismos de validación e integridad media
 
 # Estructura del Proyecto
 
-'''text
+```text
 TPO-IngDatosII/
 │
 ├── sql/
@@ -59,16 +59,16 @@ TPO-IngDatosII/
 ├── requirements.txt
 ├── .gitignore
 └── README.md
-'''
+```
 
 ---
 
 # Ejecución
 
 ## 1. Clonar repositorio
-'''bash
+```bash
 git clone https://github.com/juanalpz/TPO-IngDatosII.git
-'''
+```
 
 ## 2. Ejecutar scripts SQL
 
