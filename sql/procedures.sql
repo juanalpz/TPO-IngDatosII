@@ -5,6 +5,9 @@
 
 USE mydb;
 
+drop procedure sp_abm_cliente;
+drop procedure sp_abm_producto;
+
 DELIMITER // 
 
 CREATE PROCEDURE sp_abm_cliente (
@@ -16,33 +19,56 @@ CREATE PROCEDURE sp_abm_cliente (
     IN sp_activo		TINYINT
 )
 BEGIN
-	IF sp_accion = 'ALTA' THEN
-		INSERT INTO E01_CLIENTE
-		VALUES (
-			sp_nro_cliente, 
-			sp_nombre, 
-			sp_apellido, 
-			sp_direccion, 
-			sp_activo
-		);
-            
-	ELSEIF sp_accion = 'BAJA' THEN
-		UPDATE E01_CLIENTE
-		SET activo = 0
-		WHERE nro_cliente = sp_nro_cliente;
-            
-	ELSEIF sp_accion = 'MODIFICAR' THEN
-		UPDATE E01_CLIENTE
-		SET
-			nombre    = sp_nombre,
-			apellido  = sp_apellido,
-			direccion = sp_direccion,
-			activo    = sp_activo
-		WHERE nro_cliente = sp_nro_cliente;
-	
-	ELSE
+	DECLARE existe INT;
+    DECLARE estado_actual TINYINT;
+    
+    SELECT COUNT(*)
+    INTO existe
+    FROM E01_CLIENTE
+    WHERE nro_cliente = sp_nro_cliente;
+    
+    IF sp_accion IN ('MODIFICAR', 'BAJA') AND existe = 0 THEN
 		SIGNAL SQLSTATE '45000'
-		SET MESSAGE_TEXT = '¡Acción inválida!';
+        SET MESSAGE_TEXT = '¡El cliente no existe!';
+        
+	ELSEIF sp_accion = 'ALTA' AND existe > 0 THEN
+		SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = '¡El cliente ya existe!';
+        
+	ELSE
+		IF sp_accion = 'ALTA' THEN
+			INSERT INTO E01_CLIENTE
+			VALUES (sp_nro_cliente, sp_nombre, sp_apellido, sp_direccion, sp_activo);
+            
+		ELSEIF sp_accion = 'MODIFICAR' THEN
+			UPDATE E01_CLIENTE
+			SET
+				nombre    = sp_nombre,
+				apellido  = sp_apellido,
+				direccion = sp_direccion,
+				activo    = sp_activo
+			WHERE nro_cliente = sp_nro_cliente;
+            
+		ELSEIF sp_accion = 'BAJA' THEN
+			SELECT activo
+			INTO estado_actual
+			FROM E01_cliente
+			WHERE nro_cliente = sp_nro_cliente;
+                
+			IF estado_actual = 0 THEN
+				SIGNAL SQLSTATE '45000'
+				SET MESSAGE_TEXT = '¡El cliente ya está inactivo!';
+				
+			ELSE
+				UPDATE E01_CLIENTE
+				SET activo = 0
+				WHERE nro_cliente = sp_nro_cliente;
+			END IF;
+	
+		ELSE
+			SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = '¡Acción inválida!';
+		END IF;
 	END IF;
 END //
     
@@ -64,29 +90,40 @@ CREATE PROCEDURE sp_abm_producto (
     IN sp_stock				INT
 )
 BEGIN
-	IF sp_accion = 'ALTA' THEN
-		INSERT INTO E01_PRODUCTO
-        VALUES (
-			sp_codigo_producto, 
-            sp_marca, 
-            sp_nombre, 
-            sp_descripcion, 
-            sp_precio, 
-            sp_stock
-		);
-	ELSEIF sp_accion = 'MODIFICAR' THEN
-		UPDATE E01_PRODUCTO
-        SET
-			marca       = sp_marca,
-            nombre      = sp_nombre,
-            descripcion = sp_descripcion,
-            precio      = sp_precio,
-            stock       = sp_stock
-		WHERE codigo_producto = sp_codigo_producto;
-	
-    ELSE
+	DECLARE existe INT;
+    
+    SELECT COUNT(*)
+    INTO existe
+    FROM E01_PRODUCTO
+    WHERE codigo_producto = sp_codigo_producto;
+    
+    IF sp_accion = 'MODIFICAR' AND existe = 0 THEN
 		SIGNAL SQLSTATE '45000'
-		SET MESSAGE_TEXT = '¡Acción inválida!';
+        SET MESSAGE_TEXT = '¡El producto no existe!';
+        
+	ELSEIF sp_accion = 'ALTA' AND existe > 0 THEN
+		SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = '¡El producto ya existe!';
+        
+	ELSE
+		IF sp_accion = 'ALTA' THEN
+			INSERT INTO E01_PRODUCTO
+			VALUES (sp_codigo_producto, sp_marca, sp_nombre, sp_descripcion, sp_precio, sp_stock);
+            
+		ELSEIF sp_accion = 'MODIFICAR' THEN
+			UPDATE E01_PRODUCTO
+			SET
+				marca       = sp_marca,
+				nombre      = sp_nombre,
+				descripcion = sp_descripcion,
+				precio      = sp_precio,
+				stock       = sp_stock
+			WHERE codigo_producto = sp_codigo_producto;
+		
+		ELSE
+			SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = '¡Acción inválida!';
+		END IF;
 	END IF;
 END //
 
