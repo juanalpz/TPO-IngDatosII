@@ -9,32 +9,37 @@ UADE - 1° Cuatrimestre 2026
 ---
 
 # Descripción del Proyecto
-El proyecto consiste en el desarrollo de un sistema de facturación orientado a la gestión de:
-- Clientes
-- Teléfonos
-- Productos
-- Facturas
-- Detalles de facturación
+Este trabajo práctico consiste en el diseño e implementación de un sistema de facturación para la gestión de clientes, productos y ventas.
 
-El sistema permite registrar compras realizadas por clientes, controlar el stock disponible de productos y calcular automáticamente los montos correspondientes incluyendo IVA.
+El sistema permite:
+- Registrar clientes y sus datos de contacto
+- Gestionar productos con control de stock
+- Generar facturas con cálculo de IVA
+- Mantener integridad de los datos mediante constraints, triggers y procedimientos almacenados
+- Consultar información mediante queries y vistas
 
-Además, se implementaron distintos mecanismos de validación e integridad mediante:
-- Constraints
-- Triggers
-- Procedimientos almacenados
-- Índices
-- Vistas
+---
+
+# Modelo de datos
+
+El sistema se basa en las siguientes entidades principales:
+- **Cliente**: información personal y estado del cliente
+- **Teléfono**: múltiples contactos por cliente
+- **Producto**: catálogo con stock y precios
+- **Factura**: cabecera de venta con totales e impuestos
+- **DetalleFactura**: relación entre facturas y productos
+
+Relaciones principales:
+- Un cliente puede tener múltiples teléfonos
+- Un cliente puede tener múltiples facturas
+- Una factura cintiene múltiples productos (relación N:N resuelta con detalle)
 
 ---
 
 # Tecnologías Utilizadas
 
-## Base de Datos
-- MySQL 8.0
-
-## Control de versiones
-- Git
-- Github
+- MySQL
+- MySQL Workbench
 
 ---
 
@@ -67,7 +72,7 @@ TPO-IngDatosII/
 
 ---
 
-# Ejecución
+# Orden de Ejecución
 
 ## 1. Clonar repositorio
 ```bash
@@ -76,7 +81,8 @@ git clone https://github.com/juanalpz/TPO-IngDatosII.git
 
 ## 2. Ejecutar scripts SQL
 
-Orden recomendado:
+Ejecutar los scripts en el siguiente orden:
+
 1. schema.sql
 2. constraints.sql
 3. indexes.sql
@@ -87,6 +93,14 @@ Orden recomendado:
 8. queries.sql
 
 ---
+
+# Decisiones de Diseño
+- Se implementaron **constraints CHECK** para validar datos críticos (precio, stock, cantidades)
+- Se utilizaron **triggers** para automatizar el control de stock y el cálculo de totales con IVA
+- Se aplicaron **procedimientos almacenados** para centralizar operaciones de ABM
+- Se incorporaron **índices** para mejorar el rendimiento de consultas frecuentes
+- Se separó la lógica en scripts independientes para facilitar mantenimiento y lectura
+
 # Estado del Proyecto
 
 En desarrollo
