@@ -1,106 +1,64 @@
-# Sistema de Facturación - Ingeniería de Datos II
-Trabajo Práctico Obligatorio correspondiente a la materia **"Ingeniería de datos II"**
-UADE - 1° Cuatrimestre 2026
+# 📦 Sistema de Gestión y Facturación - Ingeniería de Datos II
 
-## Integrantes
+**Segunda Entrega - Trabajo Práctico Obligatorio**
+Materia: "Ingeniería de datos II" | UADE - 1° Cuatrimestre 2026
+
+## 👥 Integrantes
 - Juana López
 - Aron Lovey
 
 ---
 
-# Descripción del Proyecto
-Este trabajo práctico consiste en el diseño e implementación de un sistema de facturación para la gestión de clientes, productos y ventas.
+## 🚀 Descripción del Proyecto
+Este trabajo práctico consiste en el diseño e implementación de un sistema completo de facturación para la gestión de clientes, productos y ventas. 
 
-El sistema permite:
-- Registrar clientes y sus datos de contacto
-- Gestionar productos con control de stock
-- Generar facturas con cálculo de IVA
-- Mantener integridad de los datos mediante constraints, triggers y procedimientos almacenados
-- Consultar información mediante queries y vistas
+Para esta **segunda entrega**, el sistema evolucionó hacia una **arquitectura políglota** con una interfaz gráfica funcional, permitiendo:
+- **Gestión Maestra (MySQL):** Registrar clientes y gestionar el catálogo de productos con control de stock estricto usando *triggers* y *stored procedures*.
+- **Gestión Documental (MongoDB):** Las facturas y sus detalles ahora se almacenan como documentos JSON en MongoDB, aprovechando su flexibilidad y velocidad para lecturas de historiales.
+- **Interfaz Gráfica (Frontend):** Un panel visual interactivo y moderno para administrar toda la información de forma sencilla.
 
 ---
 
-# Modelo de datos
+## 🛠 Tecnologías Utilizadas
 
-El sistema se basa en las siguientes entidades principales:
-- **Cliente**: información personal y estado del cliente
-- **Teléfono**: múltiples contactos por cliente
-- **Producto**: catálogo con stock y precios
-- **Factura**: cabecera de venta con totales e impuestos
-- **DetalleFactura**: relación entre facturas y productos
+**Bases de Datos:**
+- 🐬 **MySQL 8.0**: Para datos estructurados y críticos (Clientes, Productos, Teléfonos).
+- 🍃 **MongoDB**: Para el almacenamiento documental de las Facturas.
 
-Relaciones principales:
-- Un cliente puede tener múltiples teléfonos
-- Un cliente puede tener múltiples facturas
-- Una factura cintiene múltiples productos (relación N:N resuelta con detalle)
+**Backend:**
+- 🐍 **Python 3 / Flask**: API RESTful que orquesta la comunicación entre el frontend y ambas bases de datos.
+
+**Frontend:**
+- 🌐 **HTML5, CSS3, Vanilla JavaScript**: Interfaz minimalista, limpia y sin dependencias externas complejas.
 
 ---
 
-# Tecnologías Utilizadas
+## ⚙️ Cómo hacer funcionar el proyecto
 
-- MySQL
-- MySQL Workbench
+### 1. Configurar las Bases de Datos
+1. **MySQL:** Ejecutar el archivo `tpo.sql` en tu MySQL Workbench para crear el esquema, los stored procedures iniciales y cargar los datos de prueba.
+2. **MongoDB:** Asegurate de tener MongoDB ejecutándose localmente en el puerto `27017`. La base de datos y colecciones se crearán automáticamente al emitir la primera factura.
 
----
-
-# Estructura del Proyecto
-
-```text
-TPO-IngDatosII/
-│
-├── data/
-│   └── *.csv
-│
-├── docs/
-│   ├── DER.jpg
-│   └── TRABAJO_PRACTICO_OBLIGATORIO_2026.pdf
-│
-├── sql/
-│   ├── schema.sql
-│   ├── load_data.sql
-│   ├── queries.sql
-│   ├── views.sql
-│   ├── procedures.sql
-│   ├── triggers.sql
-│   ├── constraints.sql
-│   └── indexes.sql
-│
-├── .gitignore
-├── README.md
-└── requirements.txt
-```
-
----
-
-# Orden de Ejecución
-
-## 1. Clonar repositorio
+### 2. Levantar el Backend (API)
+Abre una terminal en la raíz del proyecto y ejecuta:
 ```bash
-git clone https://github.com/juanalpz/TPO-IngDatosII.git
+# Instalar dependencias necesarias
+pip install -r requirements.txt
+
+# Iniciar el servidor Flask
+python backend/app.py
 ```
+*El servidor backend quedará escuchando peticiones en `http://localhost:5000`.*
 
-## 2. Ejecutar scripts SQL
-
-Ejecutar los scripts en el siguiente orden:
-
-1. schema.sql
-2. constraints.sql
-3. indexes.sql
-4. triggers.sql
-5. procedures.sql
-6. views.sql
-7. load_data.sql
-8. queries.sql
+### 3. Abrir el Frontend (Interfaz Visual)
+Para visualizar y usar el sistema, **no necesitas levantar ningún servidor web ni subir el código a internet**. 
+Simplemente navega a la carpeta `frontend/` y **haz doble clic en el archivo `index.html`** para abrirlo directamente en tu navegador (Chrome, Edge, Firefox, etc.). El frontend se conectará automáticamente al backend local.
 
 ---
 
-# Decisiones de Diseño
-- Se implementaron **constraints CHECK** para validar datos críticos (precio, stock, cantidades)
-- Se utilizaron **triggers** para automatizar el control de stock y el cálculo de totales con IVA
-- Se aplicaron **procedimientos almacenados** para centralizar operaciones de ABM
-- Se incorporaron **índices** para mejorar el rendimiento de consultas frecuentes
-- Se separó la lógica en scripts independientes para facilitar mantenimiento y lectura
+## 🧠 Decisiones de Diseño de esta Entrega
 
-# Estado del Proyecto
-
-En desarrollo
+- **Migración a MongoDB:** Decidimos migrar las tablas de `Facturas` y `DetalleFacturas` desde MySQL hacia MongoDB. En el código SQL (`tpo.sql`) hemos comentado la implementación original para que quede constancia del esquema relacional de la primera entrega, pero actualmente el sistema consolida los detalles de una venta en un único documento JSON en MongoDB, optimizando enormemente la estructura y velocidad de lectura.
+- **Validaciones Híbridas:** La emisión de facturas (MongoDB) impacta y valida automáticamente el stock restante en la base de datos MySQL en tiempo real.
+- **Cálculos en Tiempo Real:** El IVA del 21% y los totales se calculan dinámicamente al momento de la lectura y visualización, garantizando precisión sin persistir datos calculados innecesarios que puedan corromperse.
+- **Experiencia de Usuario (UX):** Desarrollamos una interfaz estilo *Single-Page Application*, estructurada de manera "humana", con validaciones asíncronas, filtrados muy rápidos en memoria y notificaciones visuales emergentes (*toasts*) para que el usuario siempre sepa qué ocurrió.
