@@ -33,12 +33,12 @@ El sistema permite:
 ---
 
 ## Modelado de datos
-# Entidades principales (MySQL)
+### Entidades principales (MySQL)
 - **Cliente:** información personal y estado del cliente
 - **Teléfono:** múltiples contactos por cliente
 - **Producto:** catálogo con stock y precios
 
-# Entidades de facturación (MongoDB)
+### Entidades de facturación (MongoDB)
 - **Factura (documento):**:
 -- datos del cliente
 -- ítems comprados
