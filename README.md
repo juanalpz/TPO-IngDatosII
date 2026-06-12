@@ -1,64 +1,131 @@
-# 📦 Sistema de Gestión y Facturación - Ingeniería de Datos II
+# Sistema de Gestión y Facturación - Ingeniería de Datos II
 
-**Segunda Entrega - Trabajo Práctico Obligatorio**
+**Trabajo Práctico Obligatorio**
 Materia: "Ingeniería de datos II" | UADE - 1° Cuatrimestre 2026
 
-## 👥 Integrantes
+## Integrantes
 - Juana López
 - Aron Lovey
 
 ---
 
-## 🚀 Descripción del Proyecto
+## Descripción del Proyecto
 Este trabajo práctico consiste en el diseño e implementación de un sistema completo de facturación para la gestión de clientes, productos y ventas. 
 
-Para esta **segunda entrega**, el sistema evolucionó hacia una **arquitectura políglota** con una interfaz gráfica funcional, permitiendo:
-- **Gestión Maestra (MySQL):** Registrar clientes y gestionar el catálogo de productos con control de stock estricto usando *triggers* y *stored procedures*.
-- **Gestión Documental (MongoDB):** Las facturas y sus detalles ahora se almacenan como documentos JSON en MongoDB, aprovechando su flexibilidad y velocidad para lecturas de historiales.
-- **Interfaz Gráfica (Frontend):** Un panel visual interactivo y moderno para administrar toda la información de forma sencilla.
+En esta segunda entrega, el sistema evoluciona hacia una **arquitectura políglota**, combinando enfoques de almacenamiento y procesamiento de datos:
+- **MySQL (modelo relacional):** utilizado para la gestión de datos estructurados y críticos como clientes, productos, teléfonos y control de stock.
+- **MongoDB (modelo documental):** utilizado para el almacenamiento de facturas y sus detalles, aprovechando su flexibilidad para representar documentos complejos.
+- **API REST con Flask:** intermediario entre frontend y base de datos, encargado de la lógica de negocio.
+- **Frontend web:** interfaz interactiva tipo panel de administración.
 
 ---
 
-## 🛠 Tecnologías Utilizadas
+## Funcionalidades del sistema
+El sistema permite:
+- Registrar, modificar e inactivar clientes
+- Gestionar productos con control de stock
+- Generar facturas con cálculo automático de IVA (21%)
+- Mantener integridad de datos mediante constraints, triggers y stored procedures
+- Consultar información mediante queries y vistas
+- Visualizar facturas históricas almacenadas en MongoDB
+- Interacción completa mediante interfaz web
+
+---
+
+## Modelado de datos
+# Entidades principales (MySQL)
+- **Cliente:** información personal y estado del cliente
+- **Teléfono:** múltiples contactos por cliente
+- **Producto:** catálogo con stock y precios
+
+# Entidades de facturación (MongoDB)
+- **Factura (documento):**:
+-- datos del cliente
+-- ítems comprados
+-- totales
+-- IVA
+-- fecha de emisión
+
+---
+
+## Relaciones principales
+- Un cliente puede tener múltiples teléfonos
+- Un client epuede tener múltiples facturas
+- Una factura contiene múltiples productos (relación N:N resuelta en MongoDB como array de items)
+
+---
+
+## Tecnologías Utilizadas
 
 **Bases de Datos:**
-- 🐬 **MySQL 8.0**: Para datos estructurados y críticos (Clientes, Productos, Teléfonos).
-- 🍃 **MongoDB**: Para el almacenamiento documental de las Facturas.
+- MySQL 8.0
+- MongoDB
 
 **Backend:**
-- 🐍 **Python 3 / Flask**: API RESTful que orquesta la comunicación entre el frontend y ambas bases de datos.
+- Python 3
+- Flask (API REST)
 
 **Frontend:**
-- 🌐 **HTML5, CSS3, Vanilla JavaScript**: Interfaz minimalista, limpia y sin dependencias externas complejas.
+- HTML5
+- CSS3
+- JavaScript
 
 ---
 
-## ⚙️ Cómo hacer funcionar el proyecto
+## Cómo ejecutar el proyecto
 
-### 1. Configurar las Bases de Datos
-1. **MySQL:** Ejecutar el archivo `tpo.sql` en tu MySQL Workbench para crear el esquema, los stored procedures iniciales y cargar los datos de prueba.
-2. **MongoDB:** Asegurate de tener MongoDB ejecutándose localmente en el puerto `27017`. La base de datos y colecciones se crearán automáticamente al emitir la primera factura.
-
-### 2. Levantar el Backend (API)
-Abre una terminal en la raíz del proyecto y ejecuta:
+### 1. Clonar el repositorio
 ```bash
-# Instalar dependencias necesarias
-pip install -r requirements.txt
+git clone https://github.com/juanalpz/TPO-IngDatosII.git
+```
 
-# Iniciar el servidor Flask
+### 2. Configurar bases de datos
+1. **MySQL:** El proyecto está modularizado en scripts independientes dentro de la carpeta:
+```bash
+/sql
+```
+Ejecutar los scripts en el siguiente orden:
+1. schema.sql
+2. constraints.sql
+3. indexes.sql
+4. triggers.sql
+5. procedures.sql
+6. views.sql
+7. load_data.sql
+8. queries.sql
+
+2. **MongoDB:** Asegurarse de tener MongoDB ejecutándose en el puerto 27017. La base de datos y colección **facturas** se crearán automáticamente al emitir la primera factura.
+
+3. **Levantar backend (Flask API):**
+```bash
+pip install -r requirements.txt
 python backend/app.py
 ```
-*El servidor backend quedará escuchando peticiones en `http://localhost:5000`.*
 
-### 3. Abrir el Frontend (Interfaz Visual)
-Para visualizar y usar el sistema, **no necesitas levantar ningún servidor web ni subir el código a internet**. 
-Simplemente navega a la carpeta `frontend/` y **haz doble clic en el archivo `index.html`** para abrirlo directamente en tu navegador (Chrome, Edge, Firefox, etc.). El frontend se conectará automáticamente al backend local.
+4. **Abrir frontend:**
+- Abrir la carpeta **frontend/**
+- Hacer doble clic en el archivo **index.html**
+- Se abrirá una nueva ventana en el navegador
 
 ---
 
-## 🧠 Decisiones de Diseño de esta Entrega
+## Decisiones de diseño
+- **Arquitectura modular:** El proyecto está dividido en scripts SQL independientes para facilitar mantenimiento, escalabilidad y orden.
+- **Migración a MongoDB:** Las facturas fueron migradas desde modelo relacional hacia documentos JSON embebidos.
+- **Separación de responsabilidades:**
+-- MySQL: Datos estructurados y transaccionales.
+-- MongoDB: Datos no estructurados y flexibilidad.
+- **Integridad de datos:**
+-- Stored procedures para ABM
+-- Triggers para control de stock
+-- Constraints para validaciones críticas
+- **Cálculo dinámico de impuestos:** IVA calculado en tiempo real al generar la factura.
+- **UX tipo SPA:**
+-- Navegación fluida
+-- Filtrado dinámico
+-- Feedback visual en tiempo real
 
-- **Migración a MongoDB:** Decidimos migrar las tablas de `Facturas` y `DetalleFacturas` desde MySQL hacia MongoDB. En el código SQL (`tpo.sql`) hemos comentado la implementación original para que quede constancia del esquema relacional de la primera entrega, pero actualmente el sistema consolida los detalles de una venta en un único documento JSON en MongoDB, optimizando enormemente la estructura y velocidad de lectura.
-- **Validaciones Híbridas:** La emisión de facturas (MongoDB) impacta y valida automáticamente el stock restante en la base de datos MySQL en tiempo real.
-- **Cálculos en Tiempo Real:** El IVA del 21% y los totales se calculan dinámicamente al momento de la lectura y visualización, garantizando precisión sin persistir datos calculados innecesarios que puedan corromperse.
-- **Experiencia de Usuario (UX):** Desarrollamos una interfaz estilo *Single-Page Application*, estructurada de manera "humana", con validaciones asíncronas, filtrados muy rápidos en memoria y notificaciones visuales emergentes (*toasts*) para que el usuario siempre sepa qué ocurrió.
+---
+
+## Estado del proyecto
+El proyecto se encuentra finalizado. Segunda entrega funcional completa.
